@@ -37,6 +37,105 @@
                 transform: translateY(-5px) rotateX(5deg) rotateY(-5deg);
                 box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             }
+            .video-opacity {
+                opacity: 0.4; /* 40% opacity */
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark text-white overflow-hidden h-screen w-screen">
+
+    <!-- Background Video - Muted, Loop, PlaysInline for maximum compatibility -->
+    <video id="bgVideo" class="fixed top-0 left-0 w-full h-full object-cover video-opacity -z-10" loop muted playsinline>
+        <source src="ali.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Main Content -->
+    <main class="relative z-10 w-full h-full flex flex-col items-center justify-center px-4">
+        
+        <!-- Video Controls - Top of Page -->
+        <div class="absolute top-10 flex gap-4">
+            <button onclick="startVideo()" class="glass-effect px-6 py-3 rounded-xl btn-3d">
+                <i class="fa fa-play mr-2"></i> Start Animation (ali.mp4)
+            </button>
+            <button onclick="stopVideo()" class="glass-effect px-6 py-3 rounded-xl btn-3d">
+                <i class="fa fa-pause mr-2"></i> Stop Animation
+            </button>
+        </div>
+
+        <!-- Audio Buttons Container -->
+        <div class="flex flex-col md:flex-row gap-6 md:gap-10 items-center justify-center">
+            
+            <!-- Button 1 -->
+            <button onclick="playAudio('story1.mp3')" 
+                    class="btn-3d glass-effect px-8 py-6 rounded-2xl w-48 h-48 flex flex-col items-center justify-center group">
+                <i class="fa fa-play-circle text-5xl mb-3 text-white/80 group-hover:text-white transition-colors"></i>
+                <span class="text-xl font-semibold tracking-wider">STORY ONE</span>
+                <span class="text-xs text-white/60 mt-1">Listen Now</span>
+            </button>
+
+            <!-- Button 2 -->
+            <button onclick="playAudio('story2.mp3')" 
+                    class="btn-3d glass-effect px-8 py-6 rounded-2xl w-48 h-48 flex flex-col items-center justify-center group">
+                <i class="fa fa-play-circle text-5xl mb-3 text-white/80 group-hover:text-white transition-colors"></i>
+                <span class="text-xl font-semibold tracking-wider">STORY TWO</span>
+                <span class="text-xs text-white/60 mt-1">Listen Now</span>
+            </button>
+
+            <!-- Button 3 Stop -->
+            <button onclick="stopAudio()" 
+                    class="btn-3d glass-effect px-8 py-6 rounded-2xl w-48 h-48 flex flex-col items-center justify-center group hover:bg-red-500/20">
+                <i class="fa fa-stop-circle text-5xl mb-3 text-white/80 group-hover:text-white transition-colors"></i>
+                <span class="text-xl font-semibold tracking-wider">STOP</span>
+                <span class="text-xs text-white/60 mt-1">End playback</span>
+            </button>
+        </div>
+
+    </main>
+
+    <script>
+        // Create audio object ONCE
+        let currentAudio = new Audio();
+        const video = document.getElementById('bgVideo');
+
+        function playAudio(src) {
+            // Change the source if clicking a different story
+            if (currentAudio.src !== src) {
+                currentAudio.src = src;
+            }
+            
+            // Play the audio
+            currentAudio.play();
+
+            // 👇 FORCE VIDEO TO PLAY, NO MATTER WHAT 👇
+            video.play(); 
+        }
+
+        function stopAudio() {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            
+            // Keep video playing
+            video.play();
+        }
+
+        function startVideo() {
+            video.play();
+        }
+
+        function stopVideo() {
+            video.pause();
+        }
+
+        // Start video automatically on page load
+        video.play();
+    </script>
+</body>
+</html>
+                transform: translateY(-5px) rotateX(5deg) rotateY(-5deg);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            }
             /* Image is 70% dark = opacity 30% */
             .dark-image {
                 opacity: 0.3; 
