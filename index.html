@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Audio Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0F0F17',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-effect {
+                background: rgba(255, 255, 255, 0.08);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            }
+            .btn-3d {
+                transform-style: preserve-3d;
+                transition: all 0.3s ease;
+            }
+            .btn-3d:hover {
+                transform: translateY(-5px) rotateX(5deg) rotateY(-5deg);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            }
+            /* Image is 70% dark = opacity 30% */
+            .dark-image {
+                opacity: 0.3; 
+            }
+            .slide-fade {
+                transition: opacity 1s ease-in-out;
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark text-white overflow-hidden h-screen w-screen">
+
+    <!-- Image Slider Container -->
+    <div id="slider" class="fixed top-0 left-0 w-full h-full">
+        <!-- Images will be injected here by JS -->
+    </div>
+
+    <!-- Main Content -->
+    <main class="relative z-10 w-full h-full flex flex-col items-center justify-center px-4">
+        
+        <!-- Audio Buttons Container -->
+        <div class="flex flex-col md:flex-row gap-6 md:gap-10 items-center justify-center">
+            
+            <!-- Button 1 -->
+            <button onclick="playAudio('story1.mp3')" 
+                    class="btn-3d glass-effect px-8 py-6 rounded-2xl w-48 h-48 flex flex-col items-center justify-center group">
+                <i class="fa fa-play-circle text-5xl mb-3 text-white/80 group-hover:text-white transition-colors"></i>
+                <span class="text-xl font-semibold tracking-wider">STORY ONE</span>
+                <span class="text-xs text-white/60 mt-1">Listen Now</span>
+            </button>
+
+            <!-- Button 2 -->
+            <button onclick="playAudio('story2.mp3')" 
+                    class="btn-3d glass-effect px-8 py-6 rounded-2xl w-48 h-48 flex flex-col items-center justify-center group">
+                <i class="fa fa-play-circle text-5xl mb-3 text-white/80 group-hover:text-white transition-colors"></i>
+                <span class="text-xl font-semibold tracking-wider">STORY TWO</span>
+                <span class="text-xs text-white/60 mt-1">Listen Now</span>
+            </button>
+
+            <!-- Button 3 Stop -->
+            <button onclick="stopAudio()" 
+                    class="btn-3d glass-effect px-8 py-6 rounded-2xl w-48 h-48 flex flex-col items-center justify-center group hover:bg-red-500/20">
+                <i class="fa fa-stop-circle text-5xl mb-3 text-white/80 group-hover:text-white transition-colors"></i>
+                <span class="text-xl font-semibold tracking-wider">STOP</span>
+                <span class="text-xs text-white/60 mt-1">End playback</span>
+            </button>
+        </div>
+
+        <!-- Slideshow Controls -->
+        <div class="absolute bottom-10 flex gap-4">
+            <button onclick="startSlideshow()" class="glass-effect px-6 py-3 rounded-xl btn-3d">
+                <i class="fa fa-play mr-2"></i> Start Slide Show
+            </button>
+            <button onclick="stopSlideshow()" class="glass-effect px-6 py-3 rounded-xl btn-3d">
+                <i class="fa fa-pause mr-2"></i> Stop Slide Show
+            </button>
+        </div>
+    </main>
+
+    <script>
+        let currentAudio = null;
+        let slideIndex = 0;
+        let slideInterval = null;
+        
+        // Replace these URLs with your actual images
+        const images = [
+            "image1.jpg",
+            "image2.jpg",
+            "image3.jpg",
+            "image4.jpg",
+            "image5.jpg",
+            "image6.jpg",
+            "image7.jpg",
+            "image8.jpg",
+            "image9.jpg",
+            "image10.jpg"
+        ];
+
+        // Initialize slider
+        const slider = document.getElementById('slider');
+        images.forEach((src, i) => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.className = `absolute w-full h-full object-cover dark-image slide-fade ${i === 0 ? 'opacity-30' : 'opacity-0'}`;
+            slider.appendChild(img);
+        });
+        const slides = slider.querySelectorAll('img');
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('opacity-30'));
+            slides.forEach(slide => slide.classList.add('opacity-0'));
+            
+            slideIndex = n % slides.length;
+            slides[slideIndex].classList.remove('opacity-0');
+            slides[slideIndex].classList.add('opacity-30'); // This is the 70% dark effect
+        }
+
+        function startSlideshow() {
+            if(slideInterval) clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                showSlide(++slideIndex);
+            }, 3000); // Change image every 3 seconds
+        }
+
+        function stopSlideshow() {
+            clearInterval(slideInterval);
+            slideInterval = null;
+        }
+
+        function playAudio(src) {
+            if(currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            currentAudio = new Audio(src);
+            currentAudio.play();
+        }
+
+        function stopAudio() {
+            if(currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+        }
+
+        // Start on load
+        showSlide(0);
+        startSlideshow();
+    </script>
+</body>
+</html>
